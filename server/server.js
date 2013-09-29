@@ -61,11 +61,11 @@ if (Meteor.isServer) {
         var valInStore = HashStore.findOne({"phone": id});
         if(valInStore && valInStore.lastDidMatch)
         {
-			return [200, {'content-type':'application/json'}, JSON.stringify({"result": true})];
+			return [200, {'content-type':'application/json'}, JSON.stringify({"0": true, "1":"SS: 1337"})];
         }
         else
         {
-			return [200, {'content-type':'application/json'}, JSON.stringify({"result": false})];
+			return [200, {'content-type':'application/json'}, JSON.stringify({"0": false, "1":"no secret for you!"})];
         }
 
       }
