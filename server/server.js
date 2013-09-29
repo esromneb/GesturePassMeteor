@@ -1,6 +1,6 @@
 if (Meteor.isClient) {
   Template.hello.greeting = function () {
-    return "Welcome to server.";
+    return "Pass a gesture hash as a REST argument h=";
   };
 
   Template.hello.events({
@@ -16,4 +16,13 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
   });
+
+  Meteor.Router.add({
+
+  '/h/:id': function(id) {
+        return id;
+      }
+
+  });
+
 }
