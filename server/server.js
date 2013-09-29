@@ -26,55 +26,46 @@ if (Meteor.isServer) {
 
 	  var p = id.split("-");
 	  var JSONObj = {"phone":p[0], "hash":p[1]};
-	  var valInStore = HashStore.findOne(JSONObj);
-	  console.log(JSONObj);
-	  if(valInStore == null)
+	  var valInStore = HashStore.findOne({"phone": p[0]});
+	  var valuesAreEqual = false;
+	  if(valInStore)
 	  {
-		  JSONObj = {};
-		  JSONObj[p[0]] = "NO";
-		  // JSONObj = {p[0] :"NO"};
-		  LastMatchStore.insert(JSONObj);
-		  debugString = JSON.stringify(JSONObj);
-		  return [200, {'content-type':'application/json'}, debugString];
+		  if(valInStore.hash === p[1]){
+			  valuesAreEqual = true;
+		  }
+		  HashStore.update(valInStore._id, {$set:{"lastDidMatch": valuesAreEqual}});
 	  }
-	  else
-	  {
-		  JSONObj = {};
-		  JSONObj[p[0]] = "YES";
-		  //JSONObj = {p[0] :"YES"};
-		  LastMatchStore.insert(JSONObj);
-		  debugString = JSON.stringify(JSONObj);
-		  return [200, {'content-type':'application/json'}, debugString];
-	  }
+
+	  return [200, {'content-type':'application/json'}, JSON.stringify({"result": valuesAreEqual})];
   }
   });
 
   Meteor.Router.add({
   '/set/:id': function(id) {
-        p = id.split("-");
-        var JSONObj = {"phone":p[0], "hash":p[1]};
-        HashStore.insert(JSONObj);
-        debugString = JSON.stringify(JSONObj);
-	  	return [200, {'content-type':'application/json'}, debugString];
-      }
+	  p = id.split("-");
+	  var JSONObj = {"phone":p[0], "hash":p[1]};
+	  var valInStore = HashStore.findOne({"phone": p[0]});
+	  if(valInStore)
+	  {
+		  HashStore.update(valInStore._id, {$set:{"hash": p[1]}});
+	  }else{
+		  HashStore.insert(JSONObj);
+	  }
+	  return [200, {'content-type':'application/json'}, JSON.stringify({"result": "Success!"})];
+  }
 
   });
 
   Meteor.Router.add({
   '/lastdidmatch/:id': function(id) {
-	JSONObj = {};
-	JSONObj[id] = "YES";
-        //var JSONObj = {id:"YES"};
-        var valInStore = LastMatchStore.findOne(JSONObj);
-        if(valInStore == null)
+        var valInStore = HashStore.findOne({"phone": id});
+        if(valInStore && valInStore.lastDidMatch)
         {
-          var JSONObj = {"lastmatched":0};
-          return JSON.stringify(JSONObj);
+			return [200, {'content-type':'application/json'}, JSON.stringify({"result": true})];
         }
         else
         {
-          var JSONObj = {"lastmatched":1};
-			return [200, {'content-type':'application/json'}, JSON.stringify(JSONObj)];
+			return [200, {'content-type':'application/json'}, JSON.stringify({"result": false})];
         }
 
       }
