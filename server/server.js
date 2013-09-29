@@ -23,30 +23,30 @@ if (Meteor.isServer) {
   Meteor.Router.add({
 
   '/compare/:id': function(id) {
-        
-        var p = id.split("-");
-        var JSONObj = {"phone":p[0], "hash":p[1]};
-        var valInStore = HashStore.findOne(JSONObj);
-        console.log(JSONObj);
-        if(valInStore == null) 
-        {
-	  JSONObj = {};
-	  JSONObj[p[0]] = "NO";
-         // JSONObj = {p[0] :"NO"};
-          LastMatchStore.insert(JSONObj);
-          debugString = JSON.stringify(JSONObj);
-          return debugString;
-        }
-        else 
-        {
-	  JSONObj = {};
-	  JSONObj[p[0]] = "YES";
-          //JSONObj = {p[0] :"YES"};
-          LastMatchStore.insert(JSONObj);
-          debugString = JSON.stringify(JSONObj);
-          return debugString;
-        }
-      }
+
+	  var p = id.split("-");
+	  var JSONObj = {"phone":p[0], "hash":p[1]};
+	  var valInStore = HashStore.findOne(JSONObj);
+	  console.log(JSONObj);
+	  if(valInStore == null)
+	  {
+		  JSONObj = {};
+		  JSONObj[p[0]] = "NO";
+		  // JSONObj = {p[0] :"NO"};
+		  LastMatchStore.insert(JSONObj);
+		  debugString = JSON.stringify(JSONObj);
+		  return [200, {'content-type':'application/json'}, debugString];
+	  }
+	  else
+	  {
+		  JSONObj = {};
+		  JSONObj[p[0]] = "YES";
+		  //JSONObj = {p[0] :"YES"};
+		  LastMatchStore.insert(JSONObj);
+		  debugString = JSON.stringify(JSONObj);
+		  return [200, {'content-type':'application/json'}, debugString];
+	  }
+  }
   });
 
   Meteor.Router.add({
@@ -55,7 +55,7 @@ if (Meteor.isServer) {
         var JSONObj = {"phone":p[0], "hash":p[1]};
         HashStore.insert(JSONObj);
         debugString = JSON.stringify(JSONObj);
-        return debugString;
+	  	return [200, {'content-type':'application/json'}, debugString];
       }
 
   });
@@ -74,7 +74,7 @@ if (Meteor.isServer) {
         else
         {
           var JSONObj = {"lastmatched":1};
-          return JSON.stringify(JSONObj);
+			return [200, {'content-type':'application/json'}, JSON.stringify(JSONObj)];
         }
 
       }
